@@ -60,10 +60,22 @@ public class Call extends AbstractSQLAction {
         SQLDatasource datasource = null;
         if (sharedMap.get(new BString(Constants.DATASOURCE_KEY)) != null) {
             datasource = (SQLDatasource) sharedMap.get(new BString(Constants.DATASOURCE_KEY));
+            performCall(context, datasource, query, parameters, structType);
         } else {
-            throw new BallerinaException("Datasource have not been initialized properly at " +
+            BallerinaException e = new BallerinaException("Datasource have not been initialized properly at " +
                     "Init native action invocation.");
+            context.setReturnValues(null, SQLDatasourceUtils.getSQLConnectorError(context, e));
         }
-        executeProcedure(context, datasource, query, parameters, structType);
+
+
+    }
+
+    private void performCall(Context context, SQLDatasource datasource, String query, BRefValueArray parameters,
+            BStructType structType) {
+        try {
+            executeProcedure(context, datasource, query, parameters, structType);
+        } catch (BallerinaException e) {
+            context.setReturnValues(null, SQLDatasourceUtils.getSQLConnectorError(context, e));
+        }
     }
 }

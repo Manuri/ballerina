@@ -51,10 +51,11 @@ public class Close extends AbstractSQLAction {
         if (sharedMap.get(new BString(Constants.DATASOURCE_KEY)) != null) {
             datasource = (SQLDatasource) sharedMap.get(new BString(Constants.DATASOURCE_KEY));
         } else {
-            throw new BallerinaException("Datasource have not been initialized properly at " +
+            BallerinaException e = new BallerinaException("Datasource have not been initialized properly at " +
                     "Init native action invocation.");
+            context.setReturnValues(SQLDatasourceUtils.getSQLConnectorError(context, e));
         }
-        closeConnections((SQLDatasource) datasource);
+        closeConnections(datasource);
         context.setReturnValues();
     }
 }

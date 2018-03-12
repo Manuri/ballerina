@@ -26,6 +26,14 @@ public struct Parameter {
 	Direction direction;
 }
 
+@Description {value:"SQLConnectorError struct represents an error occured during an SQL action invocation"}
+@Field {value:"message:  An error message explaining about the error"}
+@Field {value:"cause: The error that caused SQLConnectorError to get thrown"}
+public struct SQLConnectorError {
+	string message;
+	error[] cause;
+}
+
 @Description { value: "ConnectionProperties structs represents the properties which are used to configure DB connection pool"}
 @Field {value:"url: Platform independent DB access URL"}
 @Field {value:"dataSourceClassName: Name of the DataSource class provided by the JDBC driver"}
@@ -191,28 +199,33 @@ public connector ClientConnector (DB dbType, string hostOrPath, int port, string
 	@Param { value:"query: SQL query to execute" }
 	@Param { value:"parameters: Parameter array used with the SQL query" }
 	@Return { value:"Result set for the given query" }
-	native action call (string query, Parameter[] parameters, type structType) (table);
+	@Return { value:"SQLConnectorError returned if an error occurs while calling the procedure" }
+	native action call (string query, Parameter[] parameters, type structType) (table, SQLConnectorError);
 
 	@Description { value:"The select action implementation for SQL connector to select data from tables."}
 	@Param { value:"query: SQL query to execute" }
 	@Param { value:"parameters: Parameter array used with the SQL query" }
 	@Return { value:"Result set for the given query" }
-	native action select (string query, Parameter[] parameters, type structType) (table);
+	@Return { value:"SQLConnectorError if an error occurs while performing the select operation" }
+	native action select (string query, Parameter[] parameters, type structType) (table, SQLConnectorError);
 
 	@Description { value:"The close action implementation for SQL connector to shutdown the connection pool."}
-	native action close ();
+	@Return { value:"SQLConnectorError if an error occurs while shutting down the connection pool" }
+	native action close () (SQLConnectorError);
 
 	@Description { value:"The update action implementation for SQL connector to update data and schema of the database."}
 	@Param { value:"query: SQL query to execute" }
 	@Param { value:"parameters: Parameter array used with the SQL query" }
 	@Return { value:"Updated row count" }
-	native action update (string query, Parameter[] parameters) (int);
+	@Return { value:"SQLConnectorError if an error occurs while performing the update operation" }
+	native action update (string query, Parameter[] parameters) (int, SQLConnectorError);
 
 	@Description { value:"The batchUpdate action implementation for SQL connector to batch data insert."}
 	@Param { value:"query: SQL query to execute" }
 	@Param { value:"parameters: Parameter array used with the SQL query" }
 	@Return { value:"Array of update counts" }
-	native action batchUpdate (string query, Parameter[][] parameters) (int[]);
+	@Return { value:"SQLConnectorError if an error occurs while performing the batch update operation" }
+	native action batchUpdate (string query, Parameter[][] parameters) (int[], SQLConnectorError);
 
 	@Description { value:"The updateWithGeneratedKeys action implementation for SQL connector which returns the auto generated keys during the update action."}
 	@Param { value:"query: SQL query to execute" }
@@ -220,7 +233,8 @@ public connector ClientConnector (DB dbType, string hostOrPath, int port, string
 	@Param { value:"keyColumns: Names of auto generated columns for which the auto generated key values are returned" }
 	@Return { value:"Updated row count during the query exectuion" }
 	@Return { value:"Array of auto generated key values during the query execution" }
-	native action updateWithGeneratedKeys (string query, Parameter[] parameters, string[] keyColumns) (int, string[]);
+	@Return { value:"SQLConnectorError if an error occurs while performing the update operation" }
+	native action updateWithGeneratedKeys (string query, Parameter[] parameters, string[] keyColumns) (int, string[], SQLConnectorError);
 
 }
 

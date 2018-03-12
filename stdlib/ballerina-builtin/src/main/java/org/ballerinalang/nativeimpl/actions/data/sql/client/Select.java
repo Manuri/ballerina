@@ -60,10 +60,20 @@ public class Select extends AbstractSQLAction {
         SQLDatasource datasource = null;
         if (sharedMap.get(new BString(Constants.DATASOURCE_KEY)) != null) {
             datasource = (SQLDatasource) sharedMap.get(new BString(Constants.DATASOURCE_KEY));
+            performQueryExecution(context, datasource, query, parameters, structType);
         } else {
-            throw new BallerinaException("Datasource have not been initialized properly at " +
+            BallerinaException e = new BallerinaException("Datasource have not been initialized properly at " +
                     "Init native action invocation.");
+            context.setReturnValues(null, SQLDatasourceUtils.getSQLConnectorError(context, e));
         }
-        executeQuery(context, datasource, query, parameters, structType);
+    }
+
+    private void performQueryExecution(Context context, SQLDatasource datasource, String query, BRefValueArray
+            parameters, BStructType structType) {
+        try {
+            executeQuery(context, datasource, query, parameters, structType);
+        } catch (BallerinaException e) {
+            context.setReturnValues(null, SQLDatasourceUtils.getSQLConnectorError(context, e));
+        }
     }
 }

@@ -58,10 +58,20 @@ public class Update extends AbstractSQLAction {
         SQLDatasource datasource = null;
         if (sharedMap.get(new BString(Constants.DATASOURCE_KEY)) != null) {
             datasource = (SQLDatasource) sharedMap.get(new BString(Constants.DATASOURCE_KEY));
+            performUpdateExecution(context, datasource, query, parameters);
         } else {
-            throw new BallerinaException("Datasource have not been initialized properly at " +
+            BallerinaException e = new BallerinaException("Datasource have not been initialized properly at " +
                     "Init native action invocation.");
+            context.setReturnValues(null, SQLDatasourceUtils.getSQLConnectorError(context, e));
         }
-        executeUpdate(context, datasource, query, parameters);
+    }
+
+    private void performUpdateExecution(Context context, SQLDatasource datasource, String query, BRefValueArray
+            parameters) {
+        try {
+            executeUpdate(context, datasource, query, parameters);
+        } catch (BallerinaException e) {
+            context.setReturnValues(null, SQLDatasourceUtils.getSQLConnectorError(context, e));
+        }
     }
 }

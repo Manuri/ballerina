@@ -62,10 +62,20 @@ public class UpdateWithGeneratedKeys extends AbstractSQLAction {
         SQLDatasource datasource = null;
         if (sharedMap.get(new BString(Constants.DATASOURCE_KEY)) != null) {
             datasource = (SQLDatasource) sharedMap.get(new BString(Constants.DATASOURCE_KEY));
+            performUpdateExecutionWithKeys(context, datasource, query, keyColumns, parameters);
         } else {
-            throw new BallerinaException("Datasource have not been initialized properly at " +
+            BallerinaException be = new BallerinaException("Datasource have not been initialized properly at " +
                     "Init native action invocation.");
+            context.setReturnValues(null, null, SQLDatasourceUtils.getSQLConnectorError(context, be));
         }
-        executeUpdateWithKeys(context, datasource, query, keyColumns, parameters);
+    }
+
+    private void performUpdateExecutionWithKeys(Context context, SQLDatasource datasource, String query,
+            BStringArray keyColumns, BRefValueArray parameters) {
+        try {
+            executeUpdateWithKeys(context, datasource, query, keyColumns, parameters);
+        } catch (BallerinaException e) {
+            context.setReturnValues(null, null, SQLDatasourceUtils.getSQLConnectorError(context, e));
+        }
     }
 }

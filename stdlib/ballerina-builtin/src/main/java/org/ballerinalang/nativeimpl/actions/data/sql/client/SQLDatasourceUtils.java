@@ -17,6 +17,7 @@
  */
 package org.ballerinalang.nativeimpl.actions.data.sql.client;
 
+import org.ballerinalang.bre.Context;
 import org.ballerinalang.model.types.BArrayType;
 import org.ballerinalang.model.types.BStructType;
 import org.ballerinalang.model.types.TypeKind;
@@ -32,6 +33,8 @@ import org.ballerinalang.model.values.BStringArray;
 import org.ballerinalang.model.values.BStruct;
 import org.ballerinalang.model.values.BValue;
 import org.ballerinalang.nativeimpl.actions.data.sql.Constants;
+import org.ballerinalang.util.codegen.PackageInfo;
+import org.ballerinalang.util.codegen.StructInfo;
 import org.ballerinalang.util.exceptions.BallerinaException;
 
 import java.io.BufferedReader;
@@ -70,6 +73,10 @@ import java.util.TimeZone;
  * @since 0.8.0
  */
 public class SQLDatasourceUtils {
+
+    private static final String PROTOCOL_PACKAGE_SQL = "ballerina.data.sql";
+    private static final String SQL_CONNECTOR_ERROR = "SQLConnectorError";
+    private static final String EXCEPTION_OCCURED = "Exception Occurred";
 
     public static void setIntValue(PreparedStatement stmt, BValue value, int index, int direction, int sqlType) {
         Integer val = null;
@@ -982,6 +989,19 @@ public class SQLDatasourceUtils {
             return sj.toString();
         }
         return null;
+    }
+
+    public static BStruct getSQLConnectorError(Context context, Throwable throwable) {
+        PackageInfo sqlPackageInfo = context.getProgramFile()
+                .getPackageInfo(PROTOCOL_PACKAGE_SQL);
+        StructInfo errorStructInfo = sqlPackageInfo.getStructInfo(SQL_CONNECTOR_ERROR);
+        BStruct sqlConnectorError = new BStruct(errorStructInfo.getType());
+        if (throwable.getMessage() == null) {
+            sqlConnectorError.setStringField(0, EXCEPTION_OCCURED);
+        } else {
+            sqlConnectorError.setStringField(0, throwable.getMessage());
+        }
+        return sqlConnectorError;
     }
 
     private static String getString(Calendar calendar, String type) {

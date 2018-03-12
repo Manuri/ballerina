@@ -29,6 +29,7 @@ import org.ballerinalang.nativeimpl.actions.data.sql.Constants;
 import org.ballerinalang.nativeimpl.actions.data.sql.SQLDatasource;
 import org.ballerinalang.natives.annotations.Argument;
 import org.ballerinalang.natives.annotations.BallerinaAction;
+import org.ballerinalang.util.exceptions.BallerinaException;
 
 /**
  * {@code Init} is the Init action implementation of the SQL Connector.
@@ -60,7 +61,11 @@ public class Init extends AbstractSQLAction {
         int port = (int) bConnector.getIntField(0);
         if (sharedMap.get(new BString(Constants.DATASOURCE_KEY)) == null) {
             SQLDatasource datasource = new SQLDatasource();
-            datasource.init(optionStruct, dbType, hostOrPath, port, username, password, dbName);
+            try {
+                datasource.init(optionStruct, dbType, hostOrPath, port, username, password, dbName);
+            } catch (BallerinaException e) {
+                context.setReturnValues(SQLDatasourceUtils.getSQLConnectorError(context, e));
+            }
             sharedMap.put(new BString(Constants.DATASOURCE_KEY), datasource);
         }
 

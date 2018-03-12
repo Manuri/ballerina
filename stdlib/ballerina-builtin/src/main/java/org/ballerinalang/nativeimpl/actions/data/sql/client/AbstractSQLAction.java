@@ -76,7 +76,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
-
 import javax.sql.XAConnection;
 import javax.transaction.xa.XAResource;
 
@@ -105,7 +104,7 @@ public abstract class AbstractSQLAction extends BlockingNativeCallableUnit {
             stmt = getPreparedStatement(conn, datasource, processedQuery);
             createProcessedStatement(conn, stmt, parameters);
             rs = stmt.executeQuery();
-            context.setReturnValues(constructTable(context, rs, stmt, conn, structType));
+            context.setReturnValues(constructTable(context, rs, stmt, conn, structType), null);
         } catch (Throwable e) {
             SQLDatasourceUtils.cleanupConnection(rs, stmt, conn, isInTransaction);
             throw new BallerinaException("execute query failed: " + e.getMessage(), e);
@@ -122,7 +121,7 @@ public abstract class AbstractSQLAction extends BlockingNativeCallableUnit {
             stmt = conn.prepareStatement(processedQuery);
             createProcessedStatement(conn, stmt, parameters);
             int count = stmt.executeUpdate();
-            context.setReturnValues(new BInteger(count));
+            context.setReturnValues(new BInteger(count), null);
         } catch (SQLException e) {
             throw new BallerinaException("execute update failed: " + e.getMessage(), e);
         } finally {
@@ -162,7 +161,7 @@ public abstract class AbstractSQLAction extends BlockingNativeCallableUnit {
             if (rs.next()) {
                 generatedKeys = getGeneratedKeys(rs);
             }
-            context.setReturnValues(updatedCount, generatedKeys);
+            context.setReturnValues(updatedCount, generatedKeys, null);
         } catch (SQLException e) {
             throw new BallerinaException("execute update with generated keys failed: " + e.getMessage(), e);
         } finally {
@@ -183,7 +182,7 @@ public abstract class AbstractSQLAction extends BlockingNativeCallableUnit {
             rs = executeStoredProc(stmt);
             setOutParameters(stmt, parameters);
             if (rs != null) {
-                context.setReturnValues(constructTable(context, rs, stmt, conn, structType));
+                context.setReturnValues(constructTable(context, rs, stmt, conn, structType), null);
             } else {
                 SQLDatasourceUtils.cleanupConnection(null, stmt, conn, isInTransaction);
                 context.setReturnValues();
@@ -237,7 +236,7 @@ public abstract class AbstractSQLAction extends BlockingNativeCallableUnit {
                 countArray.add(i, updatedCount[i]);
             }
         }
-        context.setReturnValues(countArray);
+        context.setReturnValues(countArray, null);
     }
 
     protected BStructType getStructType(Context context) {
