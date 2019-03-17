@@ -28,8 +28,8 @@ deploymentConfig:
   deploymentPatterns:
     - name: 'data-backed-service-deployment'
       description: 'Creates the deployment for the data-backed-service BBG'
-      remoteRepository: "https://github.com/ballerina-platform/ballerina-lang.git"
-      remoteBranch: "ballerina-scenarios-cleaned"
+      remoteRepository: "https://github.com/Manuri/ballerina.git"
+      remoteBranch: "ballerina-scenarios-cleaned-dev"
       dir: .
       scripts:
         - name: 'data-backed-service-deployment'
@@ -40,8 +40,8 @@ deploymentConfig:
             isDebugEnabled: "false"
 scenarioConfigs:
 - testType: TESTNG
-  remoteRepository: "https://github.com/ballerina-platform/ballerina-lang.git"
-  remoteBranch: "ballerina-scenarios-cleaned"
+  remoteRepository: "https://github.com/Manuri/ballerina.git"
+  remoteBranch: "ballerina-scenarios-cleaned-dev"
   name: "data-backed-service-tests"
   description: "Runs tests for the data-backed-service BBG"
   file: product-scenarios/test-grid-scripts/bbg/data/test-data-backed-service.sh
