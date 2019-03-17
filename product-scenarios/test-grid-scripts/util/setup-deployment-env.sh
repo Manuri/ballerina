@@ -25,12 +25,12 @@ setup_deployment_env() {
 
     local dep_input_dir=$1
     local dep_output_dir=$2
-    local work_dir=$(pwd)
-    declare -A infra_config
+    work_dir=$(pwd)
+    declare -g -A infra_config
     read_property_file "${dep_input_dir}/infrastructure.properties" infra_config
 
-    declare readonly docker_user=${infra_config["dockerhub_ballerina_scenarios_username"]}
-    declare readonly docker_password=${infra_config["dockerhub_ballerina_scenarios_password"]}
+    readonly docker_user=${infra_config["dockerhub_ballerina_scenarios_username"]}
+    readonly docker_password=${infra_config["dockerhub_ballerina_scenarios_password"]}
 
     # Update kube config to point to the existing cluster
     aws eks update-kubeconfig --name ${cluster_name}
