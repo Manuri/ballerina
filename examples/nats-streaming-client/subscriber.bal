@@ -10,9 +10,9 @@ listener nats:StreamingListener lis = new(conn);
 
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 @nats:StreamingSubscriptionConfig {
-    subject: "demo"
+    subject: "greetings"
 }
-service demoService on lis {
+service greetingService on lis {
     resource function onMessage(nats:StreamingMessage message) {
        // Prints the incoming message in the console.
        log:printInfo("Message Received: " + encoding:byteArrayToString(message.getData()));

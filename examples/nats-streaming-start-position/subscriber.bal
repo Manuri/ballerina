@@ -11,7 +11,7 @@ listener nats:StreamingListener lis = new(conn);
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 // By default, only new messages are received.
 @nats:StreamingSubscriptionConfig {
-    subject: "demo"
+    subject: "greetings"
 }
 service receiveNewOnly on lis {
     resource function onMessage(nats:StreamingMessage message) {
@@ -29,7 +29,7 @@ service receiveNewOnly on lis {
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 // Receives all messages from the beginning.
 @nats:StreamingSubscriptionConfig {
-    subject: "demo",
+    subject: "greetings",
     startPosition : nats:FIRST
 }
 service receiveFromBegining on lis {
@@ -48,7 +48,7 @@ service receiveFromBegining on lis {
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 // Receives messages starting from the last received message.
 @nats:StreamingSubscriptionConfig {
-    subject: "demo",
+    subject: "greetings",
     startPosition : nats:LAST_RECEIVED
 }
 service receiveFromLastReceived on lis {
@@ -68,7 +68,7 @@ service receiveFromLastReceived on lis {
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 // Receives messages starting from the provided sequence number.
 @nats:StreamingSubscriptionConfig {
-    subject: "demo",
+    subject: "greetings",
     startPosition : [nats:SEQUENCE_NUMBER, 3]
 }
 service receiveFromGivenIndex on lis {
@@ -88,7 +88,7 @@ service receiveFromGivenIndex on lis {
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 // Recieves messages since the provided historical time delta.
 @nats:StreamingSubscriptionConfig {
-    subject: "demo",
+    subject: "greetings",
     startPosition : [nats:TIME_DELTA_START, 5]
 }
 service receiveSinceTimeDelta on lis {

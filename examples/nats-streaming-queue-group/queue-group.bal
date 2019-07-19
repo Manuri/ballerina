@@ -12,13 +12,13 @@ listener nats:StreamingListener lis = new(conn);
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 // Belongs to the queue group named "sample-queue-group"
 @nats:StreamingSubscriptionConfig {
-    subject: "demo",
-    queueName: "sample-queue-group"
+    subject: "greetings",
+    queueName: "greetings-queue-group"
 }
-service firstQueueGroupMember on lis {
+service greetingService1 on lis {
     resource function onMessage(nats:StreamingMessage message) {
        // Prints the incoming message in the console.
-       log:printInfo("Message Received to first queue group member: " + encoding:byteArrayToString(message.getData()));
+       log:printInfo("Message Received to greetingService1: " + encoding:byteArrayToString(message.getData()));
     }
 
     resource function onError(nats:StreamingMessage message, nats:Error errorVal) {
@@ -31,13 +31,13 @@ service firstQueueGroupMember on lis {
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 // Belongs to the queue group named "sample-queue-group"
 @nats:StreamingSubscriptionConfig {
-    subject: "demo",
-    queueName: "sample-queue-group"
+    subject: "greetings",
+    queueName: "greetings-load-balancer"
 }
-service secondQueueGroupMember on lis {
+service greetingService2 on lis {
     resource function onMessage(nats:StreamingMessage message) {
        // Prints the incoming message in the console.
-       log:printInfo("Message Received to second queue group member: " + encoding:byteArrayToString(message.getData()));
+       log:printInfo("Message Received to greetingService2: " + encoding:byteArrayToString(message.getData()));
     }
 
     resource function onError(nats:StreamingMessage message, nats:Error errorVal) {
@@ -50,13 +50,13 @@ service secondQueueGroupMember on lis {
 // Binds the consumer to listen to the messages published to the 'demo' subject.
 // Belongs to the queue group named "sample-queue-group"
 @nats:StreamingSubscriptionConfig {
-    subject: "demo",
-    queueName: "sample-queue-group"
+    subject: "greetings",
+    queueName: "greetings-load-balancer"
 }
-service thridQueueGroupMember on lis {
+service greetingService3 on lis {
     resource function onMessage(nats:StreamingMessage message) {
        // Prints the incoming message in the console.
-       log:printInfo("Message Received to third queue group member: " + encoding:byteArrayToString(message.getData()));
+       log:printInfo("Message Received to greetingService3: " + encoding:byteArrayToString(message.getData()));
     }
 
     resource function onError(nats:StreamingMessage message, nats:Error errorVal) {
